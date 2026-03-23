@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:bmaxime6711.wordpress.com)",
+      "Bash(mkdir -p chantiers crepi isolation facade)",
+      "Bash(cp \"0d4dc4cf6a2bacbab82e6f1dbaf4cc4250f4160e.jpeg\" \"chantiers/hero-chantier-construction.jpg\")",
+      "Bash(cp \"1er-jour-2012-01-26-15.41.48.jpg\" \"crepi/crepi-application-chantier.jpg\")",
+      "Bash(cp \"20170216_114258_imgp1087.jpg\" \"isolation/isolation-pose-panneaux.jpg\")",
+      "Bash(cp \"2019-05-17-10.16.36-scaled-1.jpg\" \"facade/facade-renovation-en-cours.jpg\")"
+    ]
+  }
+}

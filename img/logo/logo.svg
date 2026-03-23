@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 110" width="320" height="110" role="img" aria-label="NF Décor Façade — logo">
+
+  <!-- House icon -->
+  <g transform="translate(10, 4)">
+    <polygon points="54,6 88,34 20,34" fill="#C0392B"/>
+    <rect x="72" y="12" width="8" height="14" rx="1" fill="#C0392B"/>
+    <rect x="24" y="33" width="60" height="36" rx="2" fill="#C0392B"/>
+    <rect x="46" y="48" width="16" height="21" rx="2" fill="#A02318"/>
+    <rect x="28" y="42" width="12" height="10" rx="1.5" fill="#A02318"/>
+    <line x1="34" y1="42" x2="34" y2="52" stroke="#C0392B" stroke-width="1.2"/>
+    <line x1="28" y1="47" x2="40" y2="47" stroke="#C0392B" stroke-width="1.2"/>
+    <rect x="68" y="42" width="12" height="10" rx="1.5" fill="#A02318"/>
+    <line x1="74" y1="42" x2="74" y2="52" stroke="#C0392B" stroke-width="1.2"/>
+    <line x1="68" y1="47" x2="80" y2="47" stroke="#C0392B" stroke-width="1.2"/>
+    <path d="M 4,76 C 8,62 20,56 36,60 C 50,63 60,58 74,52 C 82,48 90,46 100,50"
+      fill="none" stroke="#C0392B" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 6,82 L 0,74" fill="none" stroke="#C0392B" stroke-width="5" stroke-linecap="round"/>
+    <path d="M 10,84 L 4,76" fill="none" stroke="#C0392B" stroke-width="3.5" stroke-linecap="round" opacity="0.6"/>
+  </g>
+
+  <line x1="116" y1="68" x2="116" y2="100" stroke="#C0392B" stroke-width="2.5" stroke-linecap="round" opacity="0.4"/>
+
+  <text x="122" y="92"
+    font-family="'Montserrat','Arial Black',sans-serif"
+    font-size="26" font-weight="800" letter-spacing="1.5"
+    fill="#C0392B">DÉCOR FAÇADE</text>
+
+</svg>
