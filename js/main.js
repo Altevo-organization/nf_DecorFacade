@@ -321,21 +321,46 @@ function initContactForm() {
       return;
     }
 
-    /* --- Simulate successful submission --- */
+    /* --- Envoi réel via Formspree --- */
     const submitBtn = form.querySelector('[type="submit"]');
     if (submitBtn) {
       submitBtn.disabled = true;
       submitBtn.textContent = 'Envoi en cours…';
     }
 
-    // Simulate network delay
-    setTimeout(function() {
-      if (formContent) formContent.style.display = 'none';
-      if (successMsg) {
-        successMsg.classList.add('is-visible');
-        successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const formData = new FormData(form);
+
+    fetch(form.action, {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
+    })
+    .then(function(response) {
+      if (response.ok) {
+        if (formContent) formContent.style.display = 'none';
+        if (successMsg) {
+          successMsg.classList.add('is-visible');
+          successMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      } else {
+        response.json().then(function(data) {
+          const msg = (data.errors && data.errors.map(function(e) { return e.message; }).join(', '))
+            || 'Une erreur est survenue. Veuillez réessayer ou nous appeler directement.';
+          alert(msg);
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Envoyer le message';
+          }
+        });
       }
-    }, 900);
+    })
+    .catch(function() {
+      alert('Erreur réseau. Veuillez vérifier votre connexion ou nous appeler directement au 06 36 99 39 03.');
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Envoyer le message';
+      }
+    });
   });
 }
 
@@ -432,7 +457,7 @@ function initScrollToTop() {
     '  visibility: hidden;',
     '  transform: translateY(10px);',
     '  transition: opacity 250ms ease, transform 250ms ease, visibility 250ms ease, background-color 250ms ease;',
-    '  box-shadow: 0 4px 16px rgba(196,92,38,0.35);',
+    '  box-shadow: 0 4px 16px rgba(192,57,43,0.35);',
     '}',
     '.scroll-top-btn.is-visible {',
     '  opacity: 1;',
@@ -465,7 +490,145 @@ function initScrollToTop() {
 }
 
 /* ============================================================
-   11. Init all modules on DOM ready
+   11. Page Loader — maison SVG animée
+   ============================================================ */
+(function() {
+  // Injecter le loader immédiatement (avant DOMContentLoaded)
+  const loaderHTML = `
+    <div id="page-loader" aria-hidden="true">
+      <div class="loader__inner">
+        <svg class="loader__house" viewBox="0 0 120 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Toit -->
+          <polyline class="loader__path loader__path--roof" points="10,60 60,10 110,60" />
+          <!-- Murs -->
+          <polyline class="loader__path loader__path--walls" points="20,60 20,100 100,100 100,60" />
+          <!-- Porte -->
+          <polyline class="loader__path loader__path--door" points="48,100 48,75 72,75 72,100" />
+          <!-- Fenêtre gauche -->
+          <rect class="loader__path loader__path--win-left" x="28" y="67" width="14" height="14" rx="1" />
+          <!-- Fenêtre droite -->
+          <rect class="loader__path loader__path--win-right" x="78" y="67" width="14" height="14" rx="1" />
+          <!-- Cheminée -->
+          <polyline class="loader__path loader__path--chimney" points="78,48 78,28 88,28 88,42" />
+        </svg>
+        <p class="loader__label">Chargement…</p>
+      </div>
+    </div>
+  `;
+
+  const loaderStyles = `
+    #page-loader {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 10, 10, 0.92);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.9s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.9s ease;
+    }
+    #page-loader.is-hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .loader__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+    .loader__house {
+      width: 110px;
+      height: 100px;
+    }
+    .loader__path {
+      fill: none;
+      stroke: #C0392B;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .loader__path--roof    { stroke-width: 4; }
+    .loader__path--walls   { stroke-width: 4; }
+    .loader__path--door    { stroke-width: 3; }
+    .loader__path--win-left  { stroke-width: 2.5; }
+    .loader__path--win-right { stroke-width: 2.5; }
+    .loader__path--chimney { stroke-width: 3; }
+    .loader__label {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.35);
+      margin: 0;
+    }
+  `;
+
+  // Injecter styles
+  const styleTag = document.createElement('style');
+  styleTag.textContent = loaderStyles;
+  document.head.appendChild(styleTag);
+
+  // Injecter HTML
+  document.addEventListener('DOMContentLoaded', function() {
+    document.body.insertAdjacentHTML('afterbegin', loaderHTML);
+
+    // Mesurer et animer chaque path avec stroke-dasharray/dashoffset
+    const paths = document.querySelectorAll('.loader__path');
+    const delays = [0, 180, 360, 480, 560, 300]; // ms par segment
+    const durations = [420, 380, 280, 220, 220, 240];
+
+    paths.forEach(function(path, i) {
+      let length;
+      if (path.tagName === 'rect') {
+        // Périmètre du rectangle
+        const w = parseFloat(path.getAttribute('width'));
+        const h = parseFloat(path.getAttribute('height'));
+        length = 2 * (w + h);
+      } else {
+        length = path.getTotalLength ? path.getTotalLength() : 200;
+      }
+
+      path.style.strokeDasharray  = length;
+      path.style.strokeDashoffset = length;
+      path.style.transition = `stroke-dashoffset ${durations[i]}ms ease forwards`;
+      path.style.transitionDelay = `${delays[i]}ms`;
+
+      // Déclencher l'animation
+      requestAnimationFrame(function() {
+        setTimeout(function() {
+          path.style.strokeDashoffset = '0';
+        }, 80);
+      });
+    });
+
+    // Cacher le loader une fois la page chargée (ou après 1.6s max)
+    const totalAnimTime = 900;
+
+    function hideLoader() {
+      const loader = document.getElementById('page-loader');
+      if (!loader) return;
+      setTimeout(function() {
+        loader.classList.add('is-hidden');
+        setTimeout(function() { loader.remove(); }, 950);
+      }, totalAnimTime);
+    }
+
+    if (document.readyState === 'complete') {
+      hideLoader();
+    } else {
+      window.addEventListener('load', hideLoader, { once: true });
+      // Fallback : masquer au bout de 3s max
+      setTimeout(hideLoader, 3000);
+    }
+  });
+})();
+
+/* ============================================================
+   12. Init all modules on DOM ready
    ============================================================ */
 ready(function() {
   initStickyHeader();
